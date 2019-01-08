@@ -1,4 +1,4 @@
-package com.github.lekaha.library;
+package com.github.lekaha.views;
 
 import org.junit.Test;
 

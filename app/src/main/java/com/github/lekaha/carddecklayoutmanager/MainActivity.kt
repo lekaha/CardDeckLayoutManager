@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.lekaha.views.CardDeckLayoutManager
 import kotlinx.android.synthetic.main.activity_main.recycler
 
 class MainActivity : AppCompatActivity() {
@@ -23,9 +23,7 @@ class MainActivity : AppCompatActivity() {
         val sequence = generateSequence { randomGenerateCard().takeIf { --cardSize > 0 } }
         val cards = sequence.toList()
         recycler.adapter = Adapter(cards)
-
-        // FIXME: use custom layout manager
-        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.layoutManager = CardDeckLayoutManager(this)
     }
 
     private fun randomGenerateCard() =

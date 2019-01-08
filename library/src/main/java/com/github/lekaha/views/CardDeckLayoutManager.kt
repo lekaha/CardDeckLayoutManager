@@ -1,12 +1,13 @@
 package com.github.lekaha.views
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutParams
 
-class CardDeckLayoutManager : RecyclerView.LayoutManager() {
+class CardDeckLayoutManager(val context: Context) : RecyclerView.LayoutManager() {
 
     companion object {
         const val FIRST_VISIBLE_POSITION = "FIRST_VISIBLE_POSITION"
