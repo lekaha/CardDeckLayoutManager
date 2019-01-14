@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
 import androidx.core.os.bundleOf
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutParams
 import com.github.lekaha.views.scrollhandler.CardDeckScrollHandler
@@ -14,9 +13,9 @@ import com.github.lekaha.views.scrollhandler.ScrollHandler
 
 class CardDeckLayoutManager(
     val context: Context,
-    val revealPixelHeight: Int,
-    val expandablePixelHeight: Int = 0
-) : LinearLayoutManager(context), ScrollHandler.Callback {
+    recyclerView: RecyclerView,
+    private val revealPixelHeight: Int
+) : RecyclerView.LayoutManager(), ScrollHandler.Callback {
 
     companion object {
         const val FIRST_VISIBLE_POSITION = "FIRST_VISIBLE_POSITION"
@@ -35,35 +34,58 @@ class CardDeckLayoutManager(
     private var decoratedChildHeight: Int = 0
 
     private var previousViewCenter: Point? = null
+    private var recyclerViewBottom: Int = 0
 
     private val scrollHandler: ScrollHandler = CardDeckScrollHandler(this)
+
+    init {
+        recyclerView.setHasFixedSize(true)
+        recyclerViewBottom = recyclerView.bottom
+    }
 
     override fun getFirstVisiblePosition() = firstVisiblePosition
 
     override fun getLastVisiblePosition() = lastVisiblePosition
 
+    override fun getRevealHeight() = revealPixelHeight
+
+    override fun getBottom() = recyclerViewBottom
+
     override fun incrementFirstVisiblePosition() {
-        firstVisiblePosition++
+        if (firstVisiblePosition < itemCount - 1)
+            firstVisiblePosition++
     }
 
     override fun incrementLastVisiblePosition() {
-        lastVisiblePosition++
+        if (lastVisiblePosition < itemCount - 1)
+            lastVisiblePosition++
     }
 
     override fun decrementLastVisiblePosition() {
-        lastVisiblePosition--
+        if (lastVisiblePosition > 0)
+            lastVisiblePosition--
     }
 
     override fun decrementFirstVisiblePosition() {
-        firstVisiblePosition--
+        if (firstVisiblePosition > 0)
+            firstVisiblePosition--
     }
 
+    override fun supportsPredictiveItemAnimations() = true
+
     override fun canScrollHorizontally() = false
+
+    override fun canScrollVertically() = true
+
+    override fun onItemsRemoved(recyclerView: RecyclerView, positionStart: Int, itemCount: Int) {
+        firstChangedPosition = positionStart
+        changedPositionCount = itemCount
+    }
 
     override fun generateDefaultLayoutParams(): LayoutParams =
         RecyclerView.LayoutParams(
             RecyclerView.LayoutParams.MATCH_PARENT,
-            RecyclerView.LayoutParams.MATCH_PARENT
+            RecyclerView.LayoutParams.WRAP_CONTENT
         )
 
     override fun onSaveInstanceState(): Parcelable {
@@ -87,15 +109,13 @@ class CardDeckLayoutManager(
             return 0
         }
 
-        val firstCompleteVisiblePosition = this.findFirstCompletelyVisibleItemPosition()
-        return scrollHandler.scrollVerticallyBy(dy, recycler, firstCompleteVisiblePosition)
+        return scrollHandler.scrollVerticallyBy(dy, recycler)
     }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
 
         //We have nothing to show for an empty data set but clear any existing views
         if (itemCount == 0) {
-            removeAllViews()
             detachAndScrapAttachedViews(recycler)
             return
         }
@@ -104,8 +124,6 @@ class CardDeckLayoutManager(
             //Nothing to do during prelayout when empty
             return
         }
-
-        removeAllViews()
 
         // TODO: These values should not be set to "0". They should be restored from state
         lastVisiblePosition = 0
@@ -118,38 +136,22 @@ class CardDeckLayoutManager(
         }
 
         if (childCount == 0) { //First or empty layout
-            do {
+            for (i in 0 until itemCount) {
                 //Scrap measure one child
-                val scrap = recycler.getViewForPosition(lastVisiblePosition)
-                addView(scrap)
-                measureChildWithMargins(scrap, 0, 0)
-
-                /*
-                 * We make some assumptions in this code based on every child
-                 * view being the same size (i.e. a uniform grid). This allows
-                 * us to compute the following values up front because they
-                 * won't change.
-                 */
-                decoratedChildWidth = getDecoratedMeasuredWidth(scrap)
-                decoratedChildHeight = getDecoratedMeasuredHeight(scrap)
-
-                detachAndScrapView(scrap, recycler)
-                lastVisiblePosition++
-            } while (lastVisiblePosition < itemCount)
+                val scrap = recycler.getViewForPosition(i)
+                detachView(scrap)
+            }
         }
 
-        lastVisiblePosition = 0
-        // It will be our stop flag
-        var isLastLayoutView: Boolean
-
+//        var isLastLayoutView: Boolean
         do {
             val view = recycler.getViewForPosition(lastVisiblePosition)
+            measureChildWithMargins(view, 0, 0)
             addView(view)
             layoutNextView(view)
-
-            isLastLayoutView = isLastLayoutedView(height, view)
+//            isLastLayoutView = isLastLayoutedView(height, view)
             lastVisiblePosition++
-        } while (!isLastLayoutView && lastVisiblePosition < itemCount)
+        } while (lastVisiblePosition < itemCount)
     }
 
     private fun performLayout(view: View, viewCenter: Point, halfViewWidth: Int, halfViewHeight: Int) {

@@ -1,4 +1,4 @@
 # Card Deck LayoutManager for RecyclerView
 
 ### Preview
-![preview](/screens/preview.png)
+![preview](/screens/anim_card.gif)

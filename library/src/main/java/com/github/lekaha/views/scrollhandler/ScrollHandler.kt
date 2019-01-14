@@ -5,12 +5,14 @@ import androidx.recyclerview.widget.RecyclerView
 
 interface ScrollHandler {
 
-    fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler, firstIndexOfItem: Int): Int
+    fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler): Int
 
     interface Callback {
         fun getChildCount(): Int
         fun getChildAt(index: Int): View?
         fun getHeight(): Int
+        fun getBottom(): Int
+        fun getRevealHeight(): Int
         fun getFirstVisiblePosition(): Int
         fun getDecoratedTop(view: View): Int
         fun getPaddingTop(): Int

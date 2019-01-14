@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         recycler.adapter = Adapter(cards)
 
         val revealHeight = resources.toPixel(66f)
-        recycler.layoutManager = CardDeckLayoutManager(this, revealHeight)
+        recycler.layoutManager = CardDeckLayoutManager(this, recycler, revealHeight)
     }
 
     private fun randomGenerateCard() =
