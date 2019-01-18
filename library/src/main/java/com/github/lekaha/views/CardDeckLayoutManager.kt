@@ -51,26 +51,6 @@ class CardDeckLayoutManager(
 
     override fun getBottom() = recyclerViewBottom
 
-    override fun incrementFirstVisiblePosition() {
-        if (firstVisiblePosition < itemCount - 1)
-            firstVisiblePosition++
-    }
-
-    override fun incrementLastVisiblePosition() {
-        if (lastVisiblePosition < itemCount - 1)
-            lastVisiblePosition++
-    }
-
-    override fun decrementLastVisiblePosition() {
-        if (lastVisiblePosition > 0)
-            lastVisiblePosition--
-    }
-
-    override fun decrementFirstVisiblePosition() {
-        if (firstVisiblePosition > 0)
-            firstVisiblePosition--
-    }
-
     override fun supportsPredictiveItemAnimations() = true
 
     override fun canScrollHorizontally() = false
@@ -126,8 +106,8 @@ class CardDeckLayoutManager(
         }
 
         // TODO: These values should not be set to "0". They should be restored from state
+        firstVisiblePosition = 1
         lastVisiblePosition = 0
-        firstVisiblePosition = 0
 
         ///Clear change tracking state when a real layout occurs
         if (!state.isPreLayout) {

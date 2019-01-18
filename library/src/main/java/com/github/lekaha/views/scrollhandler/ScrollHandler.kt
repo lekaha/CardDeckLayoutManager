@@ -14,16 +14,11 @@ interface ScrollHandler {
         fun getBottom(): Int
         fun getRevealHeight(): Int
         fun getFirstVisiblePosition(): Int
-        fun getDecoratedTop(view: View): Int
         fun getPaddingTop(): Int
         fun getLastVisiblePosition(): Int
         fun getItemCount(): Int
         fun removeView(view: View)
-        fun incrementFirstVisiblePosition()
-        fun incrementLastVisiblePosition()
         fun addView(view: View)
-        fun decrementLastVisiblePosition()
-        fun decrementFirstVisiblePosition()
         fun addView(newFirstView: View, position: Int)
     }
 }
