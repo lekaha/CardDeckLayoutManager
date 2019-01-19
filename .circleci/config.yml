@@ -1,59 +1,65 @@
 version: 2
 jobs:
   build:
-    branches:
-      ignore:
-      - master
     working_directory: ~/workspace
     environment:
       JVM_OPTS: -Xmx3200m
       ANDROID_API_LEVEL: 28
-      EMULATOR_API_LEVEL: 22
       ANDROID_BUILD_TOOLS_VERSION: 28.0.3
       ANDROID_ABI: armeabi-v7a
       ANDROID_TAG: google_apis
       ANDROID_TARGET: android-$ANDROID_API_LEVEL
       ADB_INSTALL_TIMEOUT: 20 # minutes (2 minutes by default)
     docker:
-    - image: circleci/android:api-28
-    test:
-      parallelism: 4
+      - image: circleci/android:api-28
     steps:
-    - checkout
-    - run:
-        name: Update android sdk
-        command: |
-          echo y | android update sdk --no-ui --all --filter tool,extra-android-m2repository,extra-google-google_play_services,extra-google-m2repository,android-${ANDROID_API_LEVEL}
-          echo y | android update sdk --no-ui --all --filter build-tools-${ANDROID_BUILD_TOOLS_VERSION}
-    - run:
-        name: Gradle dependencies
-        command: ./gradlew androidDependencies
-    - run:
-        name: Setup emulator
-        command: sdkmanager "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a" && echo "no" | avdmanager create avd -n test -k "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a"
-    #      - run:
-    #          name: Launch emulator
-    #          command: export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib && emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel on
-    #          background: true
-    - run:
-        name: Change permission
-        command: |
-          sudo chmod +x /bin/circle-android
-          sudo chown circleci:circleci /bin/circle-android
-        environment:
-          TERM: dumb
-    #      - run:
-    #          name: Wait for emulator
-    #          command: |
-    #            circle-android wait-for-boot
-    #            adb shell input keyevent 82
-    #          environment:
-    #            TERM: dumb
-    - run:
-        name: Unit testing
-        command: ./gradlew test
-        environment:
-          TERM: dumb
+      - checkout
+      - run:
+          name: Update android sdk
+          command: |
+            echo y | android update sdk --no-ui --all --filter tool,extra-android-m2repository,extra-google-google_play_services,extra-google-m2repository,android-${ANDROID_API_LEVEL}
+            echo y | android update sdk --no-ui --all --filter build-tools-${ANDROID_BUILD_TOOLS_VERSION}
+      - run:
+          name: Gradle dependencies
+          command: ./gradlew androidDependencies
+      - run:
+          name: build project
+          command: ./gradlew build
+  test:
+    environment:
+      EMULATOR_API_LEVEL: 22
+    docker:
+      - image: circleci/android:api-28
+    steps:
+      - checkout
+#      - run:
+#          name: Setup emulator
+#          command: sdkmanager "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a" && echo "no" | avdmanager create avd -n test -k "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a"
+#      - run:
+#          name: Launch emulator
+#          command: export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib && emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel on
+#          background: true
+#      - run:
+#          name: Change permission
+#          command: |
+#            sudo chmod +x /bin/circle-android
+#            sudo chown circleci:circleci /bin/circle-android
+#      - run:
+#          name: Wait for emulator
+#          command: |
+#            circle-android wait-for-boot
+#            adb shell input keyevent 82
+      - run:
+          name: Unit testing
+          command: ./gradlew test
 #      - run:
 #          name: Run Tests
 #          command: ./gradlew connectedAndroidTest --stacktrack
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
+
+
