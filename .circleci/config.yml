@@ -17,8 +17,8 @@ jobs:
       - run:
           name: Update android sdk
           command: |
-            echo y | android update sdk --no-ui --all --filter tool,extra-android-m2repository,extra-google-google_play_services,extra-google-m2repository,android-${ANDROID_API_LEVEL}
-            echo y | android update sdk --no-ui --all --filter build-tools-${ANDROID_BUILD_TOOLS_VERSION}
+            echo y | sdkmanager tool,extra-android-m2repository,extra-google-google_play_services,extra-google-m2repository,android-${ANDROID_API_LEVEL}
+            echo y | sdkmanager build-tools-${ANDROID_BUILD_TOOLS_VERSION}
       - run:
           name: Gradle dependencies
           command: ./gradlew androidDependencies
