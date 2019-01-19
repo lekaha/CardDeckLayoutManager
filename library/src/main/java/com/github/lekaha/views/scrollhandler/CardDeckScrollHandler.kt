@@ -7,8 +7,8 @@ import kotlin.math.abs
 import kotlin.math.min
 
 class CardDeckScrollHandler(
-    val callback: ScrollHandler.Callback,
-    val debug: Boolean = false
+    private val callback: ScrollHandler.Callback,
+    private val debug: Boolean = true
 ) : ScrollHandler {
 
     private var lastVisibleViewScrolled: Int = 0
@@ -27,28 +27,57 @@ class CardDeckScrollHandler(
             (callback.getChildCount() - 1) * revealHeight +
                     (callback.getChildAt(0)?.measuredHeight ?: 0) -
                     callback.getHeight()
+        var position = callback.getChildCount() -
+                (callback.getChildCount() * revealHeight - lastVisibleViewScrolled ) / revealHeight
         var delta = min(abs(dy), totalScrollable) * (dy / abs(dy))
         if (delta > 0) {
+            val gap = callback.getChildAt(position)?.top ?: 0 - (callback.getChildAt(position + 1)?.top ?: 0)
             val remainScrollable = (totalScrollable - lastVisibleViewScrolled).let {
                 if (it > 0) it else 0
             }
             delta = min(delta, remainScrollable)
-
-            // In case of delta is too much
-            while ((delta - revealHeight) > 0) {
-                scrollAllViewUpBy(-revealHeight)
-                delta -= revealHeight
-                lastVisibleViewScrolled += revealHeight
-            }
-
             lastVisibleViewScrolled += delta
-            scrollAllViewUpBy(-delta)
             firstVisibleViewScrolled = (totalScrollable - lastVisibleViewScrolled).let {
                 if (it > 0) it else 0
             }
+
+            if (gap > delta) {
+                scrollAllViewBy(position, -delta)
+                if (debug) {
+                    Log.d(
+                        "Card", "[up] Position=" + position + " delta=" + delta +
+                                " firstVisibleViewScrolled=" + firstVisibleViewScrolled +
+                                " lastVisibleViewScrolled=" + lastVisibleViewScrolled
+                    )
+                }
+                return delta
+            } else {
+                scrollAllViewBy(position, -gap)
+                delta -= gap
+                position += 1
+
+                if (position == 0) return delta
+            }
+
+            while ((delta - revealHeight) > 0) {
+                scrollAllViewBy(position, revealHeight)
+                delta -= revealHeight
+                position += 1
+
+                if (position == 0) return delta
+            }
+
+            scrollAllViewBy(position, -delta)
+
+            if (debug) {
+                Log.d(
+                    "Card", "[up] Position=" + position + " delta=" + delta +
+                            " firstVisibleViewScrolled=" + firstVisibleViewScrolled +
+                            " lastVisibleViewScrolled=" + lastVisibleViewScrolled
+                )
+            }
+
         } else {
-            var position = callback.getChildCount() -
-                    (callback.getChildCount() * revealHeight - lastVisibleViewScrolled ) / revealHeight
             val gap = callback.getChildAt(position)?.top ?: 0 - (callback.getChildAt(position - 1)?.top ?: 0)
             val remainScrollable = (totalScrollable - firstVisibleViewScrolled).let {
                 if (it > 0) it else 0
@@ -56,22 +85,23 @@ class CardDeckScrollHandler(
             delta = min(abs(delta), remainScrollable)
             firstVisibleViewScrolled += delta
             delta = -delta
+
             lastVisibleViewScrolled = (totalScrollable - firstVisibleViewScrolled).let {
                 if (it > 0) it else 0
             }
 
             if ((revealHeight - gap) > abs(delta)) {
-                scrollAllViewDownBy(position, -delta)
+                scrollAllViewBy(position, -delta)
                 if (debug) {
                     Log.d(
-                        "Card", "Position=" + position + " delta=" + delta +
+                        "Card", "[down] Position=" + position + " delta=" + delta +
                                 " firstVisibleViewScrolled=" + firstVisibleViewScrolled +
                                 " lastVisibleViewScrolled=" + lastVisibleViewScrolled
                     )
                 }
                 return delta
             } else {
-                scrollAllViewDownBy(position, (revealHeight - gap))
+                scrollAllViewBy(position, (revealHeight - gap))
                 delta += (revealHeight - gap)
                 position -= 1
 
@@ -80,18 +110,18 @@ class CardDeckScrollHandler(
 
             // In case of delta is too much
             while ((abs(delta) - revealHeight) > 0) {
-                scrollAllViewDownBy(position, revealHeight)
+                scrollAllViewBy(position, revealHeight)
                 delta += revealHeight
                 position -= 1
 
                 if (position == 0) return delta
             }
 
-            scrollAllViewDownBy(position, -delta)
+            scrollAllViewBy(position, -delta)
 
             if (debug) {
                 Log.d(
-                    "Card", "Position=" + position + " delta=" + delta +
+                    "Card", "[down] Position=" + position + " delta=" + delta +
                             " firstVisibleViewScrolled=" + firstVisibleViewScrolled +
                             " lastVisibleViewScrolled=" + lastVisibleViewScrolled
                 )
@@ -101,21 +131,10 @@ class CardDeckScrollHandler(
     }
 
     /**
-     * This method tell all views should scroll up with the offset
-     */
-    private fun scrollAllViewUpBy(indexOffset: Int) {
-        for (i in callback.getFirstVisiblePosition()..callback.getChildCount()) {
-            callback.getChildAt(i)?.also { view ->
-                scrollSingleViewVerticallyBy(view, indexOffset)
-            }
-        }
-    }
-
-    /**
      * This method tell all views should scroll down with the offset
      */
-    private fun scrollAllViewDownBy(position: Int, indexOffset: Int) {
-        if (position == 0) {
+    private fun scrollAllViewBy(position: Int, indexOffset: Int) {
+        if (position == 0 && (position == callback.getChildCount() - 1)) {
             return
         }
 
