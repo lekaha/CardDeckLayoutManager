@@ -1,20 +1,17 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion Android.compileSdk
     defaultConfig {
-        applicationId "com.github.lekaha.carddecklayoutmanager"
-        minSdkVersion 21
-        targetSdkVersion 28
+        applicationId Android.applicationId
+        minSdkVersion Android.minSdk
+        targetSdkVersion Android.targetSdk
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner Android.testInstrumentationRunner
     }
     buildTypes {
         release {
@@ -30,14 +27,14 @@ kapt {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha01'
+    implementation Dependencies.kotlinStdLib
+    implementation Dependencies.appcompat
+    implementation Dependencies.constraintlayout
+    implementation Dependencies.recyclerView
 
     implementation project(':library')
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    testImplementation Dependencies.junit
+    androidTestImplementation Dependencies.runner
+    androidTestImplementation Dependencies.espresso
 }
