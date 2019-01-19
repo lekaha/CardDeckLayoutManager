@@ -8,7 +8,7 @@ import kotlin.math.min
 
 class CardDeckScrollHandler(
     private val callback: ScrollHandler.Callback,
-    private val debug: Boolean = true
+    private val debug: Boolean = false
 ) : ScrollHandler {
 
     private var lastVisibleViewScrolled: Int = 0
