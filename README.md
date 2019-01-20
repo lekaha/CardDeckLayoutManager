@@ -44,3 +44,8 @@ For instance,
 
 ### Preview
 ![preview](/screens/anim_card.gif)
+
+
+## License
+
+See the [LICENSE](LICENSE.md) file for license rights and limitations (Apache license 2.0).
