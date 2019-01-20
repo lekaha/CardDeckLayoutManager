@@ -32,6 +32,10 @@ jobs:
       - image: circleci/android:api-28
     steps:
       - checkout
+      - run:
+          name: Update android sdk
+          command: |
+            echo y | sdkmanager --licenses
 #      - run:
 #          name: Setup emulator
 #          command: sdkmanager "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a" && echo "no" | avdmanager create avd -n test -k "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a"
