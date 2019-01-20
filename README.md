@@ -21,6 +21,23 @@ val recycler = findViewById<RecyclerView>(R.id.recycler)
 recycler.layoutManager = CardDeckLayoutManager(this, recycler, revealHeight)
 ```
 
+### Optional
+
+If you would like to make your items in the list are more like `card` you can find this [Drawable resource file](/app/src/main/res/drawable/bg_card.xml)
+And add it as your item layout background. 
+For instance,
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card"> <-- here
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+![preview](/screens/item.png)
+
 ### Known issues
 
 - Not yet have recycling mechanism
