@@ -54,11 +54,11 @@ jobs:
 #      - run:
 #          name: Run Tests
 #          command: ./gradlew connectedAndroidTest --stacktrack
-  deploy:
-    docker:
-      - image: circleci/android:api-28
-    steps:
-      - checkout
+#  deploy:
+#    docker:
+#      - image: circleci/android:api-28
+#    steps:
+#      - checkout
 workflows:
   version: 2
   build_and_test:
@@ -67,12 +67,12 @@ workflows:
       - test:
           requires:
             - build
-      - deploy:
-          type: approval
-          requires:
-            - test
-          filters:
-            only:
-              - master
+#      - deploy:
+#          type: approval
+#          requires:
+#            - test
+#          filters:
+#            only:
+#              - master
 
 
