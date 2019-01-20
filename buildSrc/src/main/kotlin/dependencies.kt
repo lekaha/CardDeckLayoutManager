@@ -1,10 +1,26 @@
 @file:Suppress("unused")
 
 object Ext {
+    val libraryName = "Card Deck layoutManager"
+    val libraryDescription = "Scroll RecyclerView as scrolling a deck of cards. This library offers a custom LayoutManager to achieve it."
+
     val versionCode = 1
     val versionName = "1.0.0"
+
+    val repoName = "MavenRepo"
     val groupName = "com.github.lekaha"
     val artifact = "carddecklayoutmanager"
+
+    val siteUrl = "https://github.com/lekaha/CardDeckLayoutManager"
+    val gitUrl = "https://github.com/lekaha/CardDeckLayoutManager.git"
+
+    val developerId = "lekaha"
+    val developerName = "lekaha"
+    val developerEmail = "lekaha@gmail.com"
+
+    val licenseName = "The Apache Software License, Version 2.0"
+    val licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+    val allLicenses = arrayOf("Apache-2.0")
 }
 
 object Android {
@@ -18,6 +34,8 @@ object Android {
 object Versions {
     val kotlinVersion = "1.3.11"
     val androidPluginVersion = "3.3.0"
+    val bintrayPluginVersion = "1.8.4"
+    val androidMavenPluginVersion = "2.1"
 
     val appCompatVersion = "1.1.0-alpha01"
     val recyclerviewVersion = "1.1.0-alpha01"
@@ -32,6 +50,8 @@ object Versions {
 object Plugins {
     val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlinVersion}"
     val android = "com.android.tools.build:gradle:${Versions.androidPluginVersion}"
+    val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintrayPluginVersion}"
+    val androidMaven = "com.github.dcendents:android-maven-gradle-plugin:${Versions.androidMavenPluginVersion}"
 }
 
 object Dependencies {

@@ -2,6 +2,33 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+    bintrayRepo = Ext.repoName
+    bintrayName = "${Ext.groupName}.${Ext.artifact}"
+
+    publishedGroupId = Ext.groupName
+    libraryName = Ext.artifact
+    artifact = Ext.artifact
+
+    libraryDescription = Ext.libraryDescription
+
+    siteUrl = Ext.siteUrl
+    gitUrl = Ext.gitUrl
+
+    libraryVersion = Ext.versionName
+
+    developerId = Ext.developerId
+    developerName = Ext.developerName
+    developerEmail = Ext.developerEmail
+
+    licenseName = Ext.licenseName
+    licenseUrl = Ext.licenseUrl
+    allLicenses = Ext.allLicenses
+}
+
 android {
     compileSdkVersion Android.compileSdk
     defaultConfig {
@@ -31,4 +58,11 @@ dependencies {
     testImplementation Dependencies.junit
     androidTestImplementation Dependencies.runner
     androidTestImplementation Dependencies.espresso
+}
+
+//Add these lines to publish library to bintray. This is the readymade scripts made by github user nuuneoi to make uploading to bintray easy.
+//Place it at the end of the file
+if (project.rootProject.file('local.properties').exists()) {
+    apply from: '../gradle/install.gradle'
+    apply from: '../gradle/bintray.gradle'
 }
