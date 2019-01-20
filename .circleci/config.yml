@@ -17,6 +17,7 @@ jobs:
       - run:
           name: Update android sdk
           command: |
+            echo y | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
             echo y | sdkmanager --licenses "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
       - run:
           name: Gradle dependencies
