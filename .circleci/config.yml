@@ -28,6 +28,7 @@ jobs:
   test:
     environment:
       EMULATOR_API_LEVEL: 22
+      ANDROID_BUILD_TOOLS_VERSION: 28.0.3
     docker:
       - image: circleci/android:api-28
     steps:
@@ -35,7 +36,11 @@ jobs:
       - run:
           name: Update android sdk
           command: |
+            echo y | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
             echo y | sdkmanager --licenses
+      - run:
+          name: Gradle dependencies
+          command: ./gradlew androidDependencies
 #      - run:
 #          name: Setup emulator
 #          command: sdkmanager "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a" && echo "no" | avdmanager create avd -n test -k "system-images;android-${EMULATOR_API_LEVEL};default;armeabi-v7a"
